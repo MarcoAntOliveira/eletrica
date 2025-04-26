@@ -75,3 +75,85 @@ V(t) = I₀.R + (V₀ - I₀.R)e^(-t/RC)
 - Ocorre quando Rth = RL
 - P(RL) = (RL.Vth²)/(Rth + RL)²
 - Condição para máxima potência: dP(RL)/dRL = 0
+
+## Circuitos RL e RC – Resposta Natural
+
+### Circuito RL
+- Corrente:
+  ```
+  i(t) = i(0) * e^{-t/(L/R)}
+  ```
+- Constante de tempo:
+  ```
+  \tau = \frac{L}{R}
+  ```
+- Energia no resistor:
+  ```
+  W_R(t) = \frac{1}{2} L [i(0)]^2 e^{-t/(L/R)}
+  ```
+- Potência no resistor:
+  ```
+  P_R(t) = R [i(0)]^2 e^{-2t/(L/R)}
+  ```
+- Energia no indutor:
+  ```
+  W_L(t) = \frac{1}{2} L [i(0)]^2
+  ```
+
+### Circuito RC
+- Corrente:
+  ```
+  i_R(t) = \frac{V(0)}{R} e^{-t/(RC)}
+  i_C(t) = -\frac{V(0)}{R} e^{-t/(RC)}
+  ```
+- Tensão:
+  ```
+  V(t) = V(0) e^{-t/(RC)}
+  ```
+- Potência no capacitor:
+  ```
+  P_C(t) = V(t) \cdot i(t) = -\frac{[V(0)]^2}{R} e^{-2t/(RC)}
+  ```
+
+---
+
+## Resposta de Circuito RLC
+
+- Equação diferencial:
+  ```
+  C \frac{d^2v(t)}{dt^2} + \frac{1}{R} \frac{dv(t)}{dt} + \frac{1}{L} v(t) = 0
+  ```
+- Solução geral:
+  ```
+  v(t) = A e^{s_1 t} + B e^{s_2 t}
+  ```
+  Onde:
+  ```
+  s_1, s_2 = -\alpha \pm \sqrt{\alpha^2 - \omega_0^2}
+  \alpha = \frac{1}{2RC}
+  \omega_0^2 = \frac{1}{LC}
+  ```
+- Condição de subamortecimento:
+  ```
+  \omega_d = \sqrt{\omega_0^2 - \alpha^2}
+  s_1 = -\alpha + j\omega_d
+  s_2 = -\alpha - j\omega_d
+  ```
+
+---
+
+## Exemplo de Análise de Circuito
+
+- Aplicação de Leis de Kirchhoff para encontrar correntes e tensões em circuitos resistivos.
+- Exemplo de resolução:
+  ```
+  Va - 50 + \frac{Va}{10} + \frac{Va}{40} = 3 + 10
+  Va(\frac{1}{5} + \frac{1}{10} + \frac{1}{40}) = 13
+  Va = \frac{13}{0,325} = 40V
+  ```
+- Cálculo de correntes:
+  ```
+  Ia = \frac{40 - 50}{5} = -2A
+  Ib = \frac{40}{10} = 4A
+  Ic = \frac{40}{40} = 1A
+  ```
