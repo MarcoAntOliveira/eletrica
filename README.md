@@ -157,3 +157,22 @@ V(t) = I₀.R + (V₀ - I₀.R)e^(-t/RC)
   Ib = \frac{40}{10} = 4A
   Ic = \frac{40}{40} = 1A
   ```
+### Circuitos Trifásicos
+Há apenas duas relações de fase possíveis entre a tensão de fase a e as tensões de fase b e c. Uma das possibilidades é a tensão de fase b estar 120° atrasada em relação à tensão de fase a, caso em que a tensão de fase c deve estar 120° adiantada em relação à tensão de fase a. Essa relação entre fases é conhecida como sequência de fase abc (ou positiva). Outra possibilidade é a tensão de fase b estar 120° adiantada em relação à tensão de fase a, caso em que a tensão de fase c deve estar 120° atrasada em relação à tensão de fase a. Essa relação é conhecida como sequência de fase acb (ou negativa). Em notação fasorial, os dois conjuntos possíveis de tensões de fase equilibradas são
+
+
+$$
+V_a  = V_m \angle {0 ^{\circ}}$$
+$$V_b  = V_m \angle { -120 ^{\circ}}$$
+$$V_c  = V_m \angle +120 ^{\circ}
+$$
+
+$$V_a  = V_m \angle {  0 ^{\circ}}
+$$
+$$V_b  = V_m \angle {+120 ^{\circ}}
+$$
+
+$$V_c  = V_m \angle -120 ^{\circ}
+$$
+
+ar em paralelo se tiverem a mesma sequência de fases. Outra característica importante de um conjunto de tensões trifásicas equilibradas é que a soma das três tensões é igual a zero. Assim, pelas equações 11.1 ou pelas equações 11.2, $V_a + V_b + V_c = 0.$

@@ -1,0 +1,204 @@
+\section{Analise Númerica}
+\label{sec:analise_numerica}
+A análise será conduzida sobre um circuito LC alimentado por uma fonte de tensão alternada, composto pelos elementos descritos na Tabela  Cada componente é representado por seu símbolo convencional, acompanhado da equação que rege seu comportamento dinâmico e sua respectiva unidade de medida.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parâmetro} & \textbf{Valor} \\
+\midrule
+Tensão RMS da fonte $V_{s,\text{RMS}}$ & \SI{224}{\volt} \\
+Impedância da linha $Z_{\text{lin}}$ & $0.24 + 0.029i\ \Omega$ \\
+Potência ativa da carga 1 $P_1$ & \SI{1140}{\watt} \\
+Potência aparente da carga 1 $|S_1|$ & \SI{1580}{\voltampere} \\
+Potência reativa da carga 2 $Q_2$ & \SI{1580}{\var} \\
+Fator de potência da carga 2 $fp_2$ (atraso) & 0{,}76 \\
+Potência ativa da carga 3 $P_3$ & \SI{1430}{\watt} \\
+Potência reativa da carga 3 $Q_3$ & \SI{1405}{\var} \\
+\bottomrule
+\end{tabular}
+\caption{Parâmetros das cargas e da fonte}
+
+\begin{center}
+\begin{circuitikz}[american]
+    % Fonte de tensão senoidal
+    \draw (0,0)
+        to[sV, l=$V_s$] (0,4)
+        to[R, l=$Z_{\text{linha}}$] (2,4)
+        -- (4,4);
+
+    % Dividindo para as três cargas
+    \draw (4,4)
+        to[short] (4,3.5);
+    \draw (4,3.5)
+        to[R, l=$Z_1$] (4,2)
+        -- (0,2)
+        -- (0,0);
+
+    \draw (4,3.5)
+        to[R, l=$Z_2$] (5.5,2)
+        -- (5.5,0)
+        -- (0,0);
+
+    \draw (4,3.5)
+        to[R, l=$Z_3$] (7,2)
+        -- (7,0)
+        -- (0,0);
+\end{circuitikz}
+
+
+A modelagem esquemática do circuito é apresentada a seguir:
+
+
+A impedância do indutor é dada por:
+\[
+Z_L = j\omega L
+\]
+e a impedância do capacitor é:
+\[
+Z_C = \frac{1}{j\omega C}
+\]
+
+Aplicando o divisor de tensão, a tensão sobre o capacitor \( V_C(t) \) é dada por:
+\[
+V_C(t) = V_{AC}(t) \cdot \frac{Z_C}{Z_L + Z_C}
+\]
+
+Substituindo as impedâncias, temos:
+\[
+V_C(t) = V_0 \sin(\omega t) \cdot \frac{\frac{1}{j\omega C}}{j\omega L + \frac{1}{j\omega C}}
+\]
+
+Multiplicando numerador e denominador por \( j\omega C \), obtemos:
+\[
+V_C(t) = V_0 \sin(\omega t) \cdot \frac{1}{1 - \omega^2 LC}
+\]
+\end{center}
+
+\subsection*{Observações}
+\begin{itemize}
+    \item Quando \( \omega^2 LC = 1 \), o circuito entra em \textbf{ressonância} e o denominador se anula, indicando uma resposta teórica infinita (na prática, limitada por resistências e perdas).
+    \item Para \( \omega < \frac{1}{\sqrt{LC}} \), o capacitor tende a dominar a queda de tensão.
+    \item Para \( \omega > \frac{1}{\sqrt{LC}} \), o indutor domina a queda de tensão.
+\end{itemize}
+\newpage
+\section{Especificações da Simulação no LTSpice}
+\label{sec:especificacoes}
+
+\subsection*{Objetivo}
+
+Criar um circuito divisor de tensão utilizando impedâncias $Z_1$ e $Z_2$ de forma que a tensão de saída seja, em módulo, maior que a tensão de entrada na frequência de ressonância. O circuito deve ser implementado no LTSpice e simulado de acordo com as práticas realizadas em laboratório.
+
+\subsection*{Simulação em Análise AC}
+
+\begin{itemize}
+    \item A análise AC deve conter uma varredura com \textbf{100 pontos por década} (``dec 100'').
+    \item A frequência mínima deve ser \textbf{uma década abaixo} da frequência de ressonância $f_0$.
+    \item A frequência máxima deve ser \textbf{uma década acima} da frequência de ressonância $f_0$.
+    \item Exemplo de sintaxe para $f_0 = 15\,\text{kHz}$:
+    \begin{center}
+        \verb|.ac dec 100 1500 150000|
+    \end{center}
+    \item O gráfico da análise AC deve apresentar o módulo da função de transferência $|V_{\text{out}}/V_{\text{in}}|$ em função da frequência.
+\end{itemize}
+
+\subsection*{Simulação Transitória (Transient)}
+
+\begin{itemize}
+    \item A simulação transitória deve cobrir \textbf{100 ciclos} da frequência de ressonância.
+    \item Para $f_0 = 15\,\text{kHz}$, o período é $T = \frac{1}{f_0} \approx 66.6\,\mu s$.
+    \item Portanto, o tempo total de simulação deve ser:
+    \[
+        t_{\text{stop}} = 100 \cdot T = 100 \cdot 66.6\,\mu s = 6.66\,\text{ms}
+    \]
+    \item A visualização no gráfico deve focar nas \textbf{duas últimas oscilações}. Para isso, configure:
+    \begin{itemize}
+        \item \textbf{Stop time:} \verb|6.66m|
+        \item \textbf{Start saving data:} \verb|6.5m| (ou valor um pouco antes de 6.66 ms)
+        \item \textbf{Maximum Timestep:} \verb|66u| (opcional, ajuda na precisão)
+    \end{itemize}
+    \item Comando final:
+    \begin{center}
+        \verb|.tran 0 6.66m 6.5m 66u|
+    \end{center}
+\end{itemize}
+
+\subsection*{Considerações de Modelagem}
+
+\begin{itemize}
+    \item O gerador de sinais deve ser modelado com sua \textbf{impedância interna} (por exemplo, uma resistência em série).
+    \item Os componentes passivos (indutor e capacitor) devem considerar apenas os \textbf{efeitos parasitas discutidos em laboratório}.
+    \item Efeitos como resistência série do indutor ($R_s$) ou ESR do capacitor podem ser incluídos se indicado.
+    \item A montagem do esquemático deve seguir o \textbf{modelo visto nas práticas} de laboratório.
+\end{itemize}
+
+
+\section{Resultados}
+ \textbf{Equação de ressonância angular:}
+
+   $$
+   \omega^2 LC = 1 \Rightarrow \omega = \frac{1}{\sqrt{LC}}
+   $$
+
+ \textbf{Condição para a frequência angular $\omega$:}
+
+   $$
+   \omega > \frac{1}{\sqrt{LC}}
+   $$
+
+   Isso significa que, para o sistema estar **acima da frequência de ressonância**, a frequência angular deve ser maior que o valor de ressonância.
+
+\textbf{Comparação de frequências:}
+
+   $$
+   9{,}4248 \times 10^4 < 10 \times 10^5
+   $$
+
+   Isso mostra que a frequência de operação (aparentemente próxima de 94,248 kHz) está **abaixo** de uma frequência de referência (possivelmente 1 MHz), então ainda está **abaixo da faixa ressonante**.
+
+Valor encontrado para $\omega^2 LC$:
+
+   $$
+   \omega^2 LC = 2{,}25 \times 10^{-2}
+   $$
+
+   Isso indica que a condição de ressonância ainda **não foi atingida**, pois o valor ideal seria $\omega^2 LC = 1$. O sistema está operando **abaixo da ressonância**.
+
+---
+
+\subsection*{Conclusões}
+\begin{itemize}
+    \item  A frequência angular $\omega$ calculada ainda **não atinge a condição de ressonância**, pois $\omega^2 LC < 1$.
+    \item  Para que o circuito opere **em ressonância**, é necessário aumentar a frequência ou ajustar os valores de **L** e **C** para que:
+
+           $$
+           \omega = \frac{1}{\sqrt{LC}}
+           $$
+    \item    Como $\omega^2 LC = 2{,}25 \times 10^{-2}$, a frequência está bem **abaixo da ressonância** — o que significa que o circuito pode estar se comportando como **um filtro passa-baixas**, dependendo da configuração do divisor.
+\end{itemize}
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\linewidth]{imagem_simulacao2.png}
+    \caption{simulação LTSpice}
+    \label{fig:enter-label}
+\end{figure}
+
+
+Após os testes e simulações realizadas, foi possível observar que o circuito LC inicialmente projetado com $L = 10\ \text{mH}$ e $C = 2{,}5\ \text{nF}$ não operava em ressonância na frequência de excitação escolhida de $15\ \text{kHz}$. A frequência de ressonância teórica nesse caso estava em torno de $31{,}9\ \text{kHz}$, o que gerava distorções na forma de onda de saída.
+
+Para corrigir esse desvio, ajustou-se o valor da capacitância para $10\ \text{nF}$, mantendo a indutância em $10\ \text{mH}$. Essa alteração trouxe a frequência de ressonância do circuito para um valor bem próximo de $15\ \text{kHz}$, resultando em uma resposta senoidal amplificada na saída (Vout), característica esperada em um circuito ressonante série.
+
+Na simulação, observou-se que a tensão de saída atinge picos significativamente maiores que a tensão de entrada, demonstrando o fenômeno de ressonância e a capacidade do circuito de amplificar sinais na frequência natural. A forma de onda de saída tornou-se mais limpa e simétrica, validando o dimensionamento correto dos componentes para operação em 15 kHz.
+
+Portanto, conclui-se que a correta escolha dos parâmetros L e C é essencial para garantir o funcionamento ressonante do circuito, principalmente quando a frequência de excitação é fixa.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\linewidth]{imagem_simulação4.png}
+    \caption{Nova simulação}
+    \label{fig:enter-label}
+\end{figure}
